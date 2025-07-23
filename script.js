@@ -1,47 +1,91 @@
-const images = Array.from({ length: 10 }, (_, i) => `${i + 1}.png`);
+let images = Array.from({ length: 10 }, (_, i) => `${i + 1}.png`);
 let cards = [...images, ...images];
-cards.sort(() => 0.5 - Math.random());
+let gameBoard = document.getElementById('gameBoard');
+let firstCard, secondCard, lockBoard = false;
+let timer, time = 0, moves = 0, matched = 0;
+let hasStarted = false;
 
-const gameBoard = document.getElementById('gameBoard');
-let firstCard, secondCard;
-let lockBoard = false;
+function shuffle() {
+  cards.sort(() => 0.5 - Math.random());
+}
 
-cards.forEach(src => {
-  const card = document.createElement('div');
-  card.classList.add('card');
-  const img = document.createElement('img');
-  img.src = src;
-  card.appendChild(img);
-  card.addEventListener('click', () => flipCard(card));
-  gameBoard.appendChild(card);
-});
+function initGame() {
+  gameBoard.innerHTML = '';
+  shuffle();
+  time = 0;
+  moves = 0;
+  matched = 0;
+  hasStarted = false;
+  document.getElementById('timer').textContent = 0;
+  document.getElementById('moves').textContent = 0;
+  document.getElementById('winMessage').style.display = 'none';
+
+  cards.forEach(src => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    const img = document.createElement('img');
+    img.src = src;
+    card.appendChild(img);
+    card.addEventListener('click', () => flipCard(card));
+    gameBoard.appendChild(card);
+  });
+}
+
+function startTimer() {
+  timer = setInterval(() => {
+    time++;
+    document.getElementById('timer').textContent = time;
+  }, 1000);
+}
 
 function flipCard(card) {
   if (lockBoard || card.classList.contains('flipped')) return;
 
+  if (!hasStarted) {
+    hasStarted = true;
+    startTimer();
+  }
+
   card.classList.add('flipped');
   if (!firstCard) {
     firstCard = card;
-  } else {
-    secondCard = card;
-    checkMatch();
+    return;
   }
+
+  secondCard = card;
+  lockBoard = true;
+  moves++;
+  document.getElementById('moves').textContent = moves;
+  checkMatch();
 }
 
 function checkMatch() {
   const isMatch = firstCard.innerHTML === secondCard.innerHTML;
-  if (!isMatch) {
-    lockBoard = true;
+  if (isMatch) {
+    matched += 2;
+    if (matched === cards.length) winGame();
+    resetTurn();
+  } else {
     setTimeout(() => {
       firstCard.classList.remove('flipped');
       secondCard.classList.remove('flipped');
-      reset();
-    }, 1000);
-  } else {
-    reset();
+      resetTurn();
+    }, 800);
   }
 }
 
-function reset() {
+function resetTurn() {
   [firstCard, secondCard, lockBoard] = [null, null, false];
 }
+
+function winGame() {
+  clearInterval(timer);
+  document.getElementById('winMessage').style.display = 'block';
+}
+
+function restartGame() {
+  clearInterval(timer);
+  initGame();
+}
+
+initGame();
