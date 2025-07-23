@@ -1,3 +1,8 @@
+function startGame() {
+  document.getElementById('startBtn').style.display = 'none';
+  document.getElementById('bgMusic').play();
+  initGame();
+}
 let images = Array.from({ length: 10 }, (_, i) => `${i + 1}.png`);
 let cards = [...images, ...images];
 let gameBoard = document.getElementById('gameBoard');
@@ -88,7 +93,7 @@ function restartGame() {
   initGame();
 }
 
-initGame();
+// Wait for user to press start button
 function toggleMusic() {
   const bgMusic = document.getElementById('bgMusic');
   if (bgMusic.paused) {
