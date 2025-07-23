@@ -89,3 +89,11 @@ function restartGame() {
 }
 
 initGame();
+function toggleMusic() {
+  const bgMusic = document.getElementById('bgMusic');
+  if (bgMusic.paused) {
+    bgMusic.play();
+  } else {
+    bgMusic.pause();
+  }
+}
