@@ -1,4 +1,4 @@
-const images = Array.from({ length: 10 }, (_, i) => `images/${i + 1}.png`);
+const images = Array.from({ length: 10 }, (_, i) => `${i + 1}.png`);
 let cards = [...images, ...images];
 cards.sort(() => 0.5 - Math.random());
 
